@@ -1,0 +1,86 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: zope
+# Required-Start: $local_fs $network $remote_fs
+# Required-Stop: $local_fs $network $remote_fs
+# Default-Start:  2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Zope, a web application serve
+# Description: Starting the zope server
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=0
+zopectl="/opt/zope/bin/zopectl"
+user="zope"
+prog="zope"
+
+start() {
+        echo -n $"Starting $prog: "
+        output=`$zopectl -u $user start 2>/dev/null`
+        # the return status of zopectl is not reliable, we need to parse
+        # its output via substring match
+        if echo $output | grep -q "started"; then
+            # success
+            touch /var/lock/subsys/$prog
+            success
+            echo
+            RETVAL=0
+        else
+            # failed
+            failure
+            echo
+            RETVAL=1
+        fi
+        return $RETVAL
+}
+
+stop() {
+        echo -n $"Stopping $prog: "
+        output=`$zopectl -u $user stop 2>/dev/null`
+        # the return status of zopectl is not reliable, we need to parse
+        # its output via substring match
+        if echo $output | grep -q "stopped"; then
+            # success
+            rm -f /var/lock/subsys/$prog
+            success
+            echo
+            RETVAL=0
+        else
+            # failed
+            failure
+            echo
+            RETVAL=1
+        fi
+        return $RETVAL
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+	$zopectl status
+	;;
+  restart)
+	restart
+	;;
+  condrestart)
+	$zopectl status | grep -qs "program running" && restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|status|restart|condrestart}"
+	RETVAL=2
+esac
+
+exit $RETVAL
