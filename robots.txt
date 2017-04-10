@@ -1,0 +1,19 @@
+User-agent: *
+Disallow: /images
+Disallow: /SiteSearch
+Disallow: /temp_folder
+Disallow: /cgi-bin/
+Disallow: /clades/amniota/
+Disallow: /clades/yeasts/
+Disallow: /clades/amniota_tenrec/
+Disallow: /clades/worms/
+Disallow: /clades/flies/
+Disallow: /clades/apicomplexa/
+Disallow: /clades/amniota_est/
+Disallow: /*?*
+
+User-agent: psbot
+Disallow: /
+
+User-agent: Scirus
+Disallow: /
